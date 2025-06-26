@@ -25,18 +25,15 @@
                                     </button>
                                 </div>
                             </form>
-                            <div class="mb-3 btn-group" role="group">
+                            <section class="mb-3 btn-group" role="group">
                                 <button type="button" class="btn btn-outline-secondary active" data-filter="all">Todas</button>
                                 <button type="button" class="btn btn-outline-secondary" data-filter="pending">Pendentes</button>
                                 <button type="button" class="btn btn-outline-secondary" data-filter="completed">Concluídas</button>
-                            </div>
-                            
-
+                            </section>
                             <ul id="taskList" class="list-group">
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox">
-                                        <label class="form-check-label">Tarefa exemplo</label>
+                                        <label class="form-check-label" type="button">Tarefa exemplo</label>
                                     </div>
                                     <div class="task-actions">
                                         <button class="btn btn-sm btn-outline-primary edit-btn">Editar
@@ -55,23 +52,5 @@
                 </div>
             </div>
         </main>
-        <section class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Editar Tarefa</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" id="editTaskInput" class="form-control">
-                        <input type="hidden" id="editTaskId">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="saveEditBtn">Salvar</button>
-                    </div>
-                </div>
-            </div>
-        </section>
 </body>
 </html>
