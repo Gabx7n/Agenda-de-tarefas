@@ -17,6 +17,23 @@
             <h2 class="card-title mb-0 text-center">Agenda aula Betina</h2>
           </header>
           <section class="card-body">
+            <form id="taskForm">
+              <div class="mb-3">
+                <label for="taskInput" class="form-label">Tarefa</label>
+                <input type="text" id="taskInput" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="taskDate" class="form-label">Data</label>
+                <input type="date" id="taskDate" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="taskTime" class="form-label">Hora</label>
+                <input type="time" id="taskTime" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mb-3">
+                <i class="bi bi-plus-circle"></i> Adicionar tarefa
+              </button>
+            </form>
             <ul id="taskList" class="list-group mb-3"></ul>
             <div class="d-grid gap-2">
               <a href="editar-tarefas.html" class="btn btn-outline-primary">
