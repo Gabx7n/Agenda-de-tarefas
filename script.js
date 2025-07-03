@@ -8,14 +8,20 @@ function salvarTarefas(tarefas) {
 
 function toggleConcluida(id) {
     const tarefas = pegarTarefas();
+
     const atualizadas = tarefas.map(tarefa => {
+
+    const tarefasAtualizadas = tarefas.map(tarefa => {
+
         if (tarefa.id === id) {
             return { ...tarefa, concluida: !tarefa.concluida };
         }
         return tarefa;
     });
+
     salvarTarefas(atualizadas);
     return atualizadas;
+
 }
 
 function apagarTarefa(id) {
@@ -23,6 +29,7 @@ function apagarTarefa(id) {
     const atualizadas = tarefas.filter(tarefa => tarefa.id !== id);
     salvarTarefas(atualizadas);
     return atualizadas;
+
 }
 
 const form = document.getElementById("taskForm");
@@ -41,12 +48,14 @@ form.addEventListener("submit", function (e) {
             id: Date.now(),
             texto: texto,
             data: data,
+
             concluida: false
         };
         tarefas.push(novaTarefa);
         salvarTarefas(tarefas);
         input.value = "";
         dataInput.value = "";
+
     }
 });
 
@@ -57,13 +66,10 @@ verTodas.addEventListener("click", function () {
 
 function mostrarTarefas(tarefas) {
     lista.innerHTML = "";
-    tarefas.forEach((tarefa) => {
-        const item = document.createElement("li");
-        item.className = "list-group-item d-flex justify-content-between align-items-center";
-
         const grupo = document.createElement("div");
         grupo.className = "form-check d-flex align-items-center";
         grupo.style.flex = "1";
+
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -94,6 +100,8 @@ function mostrarTarefas(tarefas) {
         grupo.appendChild(texto);
         item.appendChild(grupo);
         item.appendChild(btnApagar);
-        lista.appendChild(item);
-    });
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(tarefa.texto));
+        item.appendChild(label);
+
 }
