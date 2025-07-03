@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const taskForm = document.getElementById('taskForm');
     const taskInput = document.getElementById('taskInput');
     const taskList = document.getElementById('taskList');
@@ -7,19 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('[data-filter]');
     const clearCompletedBtn = document.getElementById('clearCompleted');
     
-    // Initialize tasks from localStorage or empty array
     let tasks = loadTasks();
     
-    // Initial render
     renderTasks(getCurrentFilter());
 
-    // Event Listeners
     taskForm.addEventListener('submit', handleAddTask);
     taskList.addEventListener('change', handleTaskStatusChange);
     taskList.addEventListener('click', handleTaskActions);
     clearCompletedBtn.addEventListener('click', handleClearCompleted);
     
-    // Filter buttons
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             setActiveFilter(button);
@@ -27,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Functions
+    
     function loadTasks() {
         try {
             return JSON.parse(localStorage.getItem('tasks')) || [];
@@ -42,17 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderTasks(filter = 'all') {
-        // Clear the task list
         taskList.innerHTML = '';
         
-        // Filter tasks
         const filteredTasks = tasks.filter(task => {
             if (filter === 'all') return true;
             if (filter === 'completed') return task.completed;
             if (filter === 'pending') return !task.completed;
         });
         
-        // Display message if no tasks
         if (filteredTasks.length === 0) {
             taskList.innerHTML = `
                 <li class="list-group-item text-center text-muted py-4">
@@ -63,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Render each task
         filteredTasks.forEach(task => {
             const taskElement = createTaskElement(task);
             taskList.appendChild(taskElement);
@@ -142,12 +133,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const task = tasks.find(task => task.id === taskId);
         if (!task) return;
         
-        // Edit button
         if (e.target.closest('.edit-btn')) {
             handleEditTask(li, task);
         }
         
-        // Delete button
         if (e.target.closest('.delete-btn')) {
             tasks = tasks.filter(t => t.id !== taskId);
             saveTasks();
@@ -160,12 +149,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const editInput = li.querySelector('.edit-input');
         
         if (taskText.style.display !== 'none') {
-            // Switch to edit mode
             taskText.style.display = 'none';
             editInput.style.display = 'block';
             editInput.focus();
             
-            // Save on Enter, cancel on Escape
             editInput.addEventListener('keydown', function handleKeyDown(e) {
                 if (e.key === 'Enter') {
                     saveEdit(li, task, taskText, editInput);
@@ -176,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Save when focus is lost
             editInput.addEventListener('blur', function handleBlur() {
                 saveEdit(li, task, taskText, editInput);
                 editInput.removeEventListener('blur', handleBlur);
@@ -217,7 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return activeButton ? activeButton.dataset.filter : 'all';
     }
 
-    // Helper function to prevent XSS
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
