@@ -8,41 +8,54 @@ function salvarTarefas(tarefas) {
 
 function toggleConcluida(id) {
     const tarefas = pegarTarefas();
+
+    const atualizadas = tarefas.map(tarefa => {
+
     const tarefasAtualizadas = tarefas.map(tarefa => {
+
         if (tarefa.id === id) {
             return { ...tarefa, concluida: !tarefa.concluida };
         }
         return tarefa;
     });
-    salvarTarefas(tarefasAtualizadas);
-    return tarefasAtualizadas;
+
+    salvarTarefas(atualizadas);
+    return atualizadas;
+
 }
 
 function apagarTarefa(id) {
     const tarefas = pegarTarefas();
-    const tarefasAtualizadas = tarefas.filter(tarefa => tarefa.id !== id);
-    salvarTarefas(tarefasAtualizadas);
-    return tarefasAtualizadas;
+    const atualizadas = tarefas.filter(tarefa => tarefa.id !== id);
+    salvarTarefas(atualizadas);
+    return atualizadas;
+
 }
 
 const form = document.getElementById("taskForm");
 const input = document.getElementById("taskInput");
+const dataInput = document.getElementById("taskDate");
 const lista = document.getElementById("taskList");
 const verTodas = document.getElementById("showAllTasks");
 
-form.addEventListener("submit", function (evento) {
-    evento.preventDefault();
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
     const texto = input.value.trim();
+    const data = dataInput.value;
     if (texto !== "") {
         const tarefas = pegarTarefas();
         const novaTarefa = {
             id: Date.now(),
             texto: texto,
+            data: data,
+
             concluida: false
         };
         tarefas.push(novaTarefa);
         salvarTarefas(tarefas);
         input.value = "";
+        dataInput.value = "";
+
     }
 });
 
@@ -53,23 +66,21 @@ verTodas.addEventListener("click", function () {
 
 function mostrarTarefas(tarefas) {
     lista.innerHTML = "";
+        const grupo = document.createElement("div");
+        grupo.className = "form-check d-flex align-items-center";
+        grupo.style.flex = "1";
 
-    tarefas.forEach((tarefa) => {
-        const item = document.createElement("li");
-        item.className = "list-group-item d-flex justify-content-between align-items-center";
-
-        const label = document.createElement("label");
-        label.className = "form-check-label";
-        label.style.flex = "1";
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "form-check-input me-2";
         checkbox.checked = tarefa.concluida;
 
+        const texto = document.createElement("span");
+        texto.textContent = `${tarefa.texto}${tarefa.data ? ' - ' + tarefa.data : ''}`;
         if (tarefa.concluida) {
-            label.style.textDecoration = "line-through";
-            label.style.opacity = "0.6";
+            texto.style.textDecoration = "line-through";
+            texto.style.opacity = "0.6";
         }
 
         checkbox.addEventListener("change", () => {
@@ -77,9 +88,20 @@ function mostrarTarefas(tarefas) {
             mostrarTarefas(atualizadas);
         });
 
+        const btnApagar = document.createElement("button");
+        btnApagar.className = "btn btn-sm btn-outline-danger ms-2";
+        btnApagar.textContent = "Excluir";
+        btnApagar.addEventListener("click", () => {
+            const atualizadas = apagarTarefa(tarefa.id);
+            mostrarTarefas(atualizadas);
+        });
+
+        grupo.appendChild(checkbox);
+        grupo.appendChild(texto);
+        item.appendChild(grupo);
+        item.appendChild(btnApagar);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(tarefa.texto));
         item.appendChild(label);
-        lista.appendChild(item);
-    });
+
 }
