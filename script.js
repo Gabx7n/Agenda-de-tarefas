@@ -5,7 +5,6 @@ function pegarTarefas() {
 //salva no localstorage
 function salvarTarefas(tarefas) {
     localStorage.setItem("tarefas", JSON.stringify(tarefas));
-    alert("Tarefas salvas com sucesso!");
 }
 //só salva as tarefas que foram marcadas como concluídas e coloca pra serem tiradas no filtro dps
 function toggleConcluida(id) {
@@ -32,25 +31,43 @@ const input = document.getElementById("taskInput");
 const dataInput = document.getElementById("taskDate");
 const lista = document.getElementById("taskList");
 const verTodas = document.getElementById("showAllTasks");
+let timeInput = document.getElementById("taskTime");
 
 //de novo xunxera, verifica se o form existe antes de adicionar o listener
 if (form) {
+    // Adiciona o campo de hora antes do botão de submit, se ainda não existir
+    if (!timeInput) {
+        const divHora = document.createElement("div");
+        divHora.className = "mb-3";
+        const inputHora = document.createElement("input");
+        inputHora.type = "time";
+        inputHora.id = "taskTime";
+        inputHora.className = "form-control";
+        divHora.appendChild(inputHora);
+        form.insertBefore(divHora, form.querySelector('button[type="submit"]'));
+        timeInput = inputHora;
+    }
     form.addEventListener("submit", function (e) { // <--- listener aq
         e.preventDefault();
         const texto = input.value.trim();
         const data = dataInput.value;
+        const hora = timeInput ? timeInput.value : "";
         if (texto !== "") {
             const tarefas = pegarTarefas();
             const novaTarefa = {
                 id: Date.now(),
                 texto: texto,
                 data: data,
+                hora: hora,
                 concluida: false
             };
             tarefas.push(novaTarefa);
             salvarTarefas(tarefas);
             input.value = "";
             dataInput.value = "";
+            if (timeInput) timeInput.value = "";
+            // Atualiza a lista de tarefas do dia imediatamente
+            mostrarTarefasHoje();
         }
     });
 }
@@ -59,117 +76,35 @@ if (document.getElementById("allTasksList")) {
     const filterButtons = document.querySelectorAll('[data-filter]');
     const clearCompletedBtn = document.getElementById("clearAllCompleted");
     let currentFilter = "all";
-    // renderiza todas as tarefas com base no filtro atual
-    function renderAllTasks() {
-        let tarefas = pegarTarefas();
-        if (currentFilter === "pending") {
-            tarefas = tarefas.filter(t => !t.concluida);
-        } else if (currentFilter === "completed") {
-            tarefas = tarefas.filter(t => t.concluida);
-        }
-        allTasksList.innerHTML = "";
-        if (tarefas.length === 0) {
-            const vazio = document.createElement("li");
-            vazio.className = "list-group-item text-center text-muted";
-            vazio.textContent = "Nenhuma tarefa encontrada.";
-            allTasksList.appendChild(vazio);
-            return;
-    // a cada tarefa ele faz um foreach para criar os elementos 
-        }
-        tarefas.forEach(tarefa => {
-            const item = document.createElement("li");
-            item.className = "list-group-item d-flex justify-content-between align-items-center task-item";
-            const grupo = document.createElement("div");
-            grupo.className = "form-check d-flex align-items-center";
-            grupo.style.flex = "1";
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "form-check-input me-2";
-            checkbox.checked = tarefa.concluida;
-            checkbox.addEventListener("change", () => {
-                toggleConcluida(tarefa.id);
-                
-            });
-            //odeio bootstrap mas é o que tem pra hoje
-            const texto = document.createElement("span");
-            texto.textContent = `${tarefa.texto}${tarefa.data ? ' - ' + tarefa.data : ''}`;
-            if (tarefa.concluida) {
-                texto.style.textDecoration = "line-through";
-                texto.style.opacity = "0.6";
-            }
-            const editInput = document.createElement("input");
-            editInput.type = "text";
-            editInput.value = tarefa.texto;
-            editInput.className = "form-control form-control-sm me-2";
-            editInput.style.display = "none";
-
-            const btnEditar = document.createElement("button");
-            btnEditar.className = "btn btn-sm btn-outline-secondary ms-2";
-            btnEditar.textContent = "Editar";
-            let editando = false;
-            btnEditar.addEventListener("click", () => {
-                if (!editando) {
-                    texto.style.display = "none";
-                    editInput.style.display = "inline-block";
-                    editInput.focus();
-                    btnEditar.textContent = "Salvar";
-                    editando = true;
-                } else {
-                    const novoTexto = editInput.value.trim();
-                    if (novoTexto) {
-                        const tarefasAtual = pegarTarefas();
-                        const atualizadas = tarefasAtual.map(t => t.id === tarefa.id ? { ...t, texto: novoTexto } : t);
-                        salvarTarefas(atualizadas);
-                        renderAllTasks();
-                    }
-                }
-            });
-            editInput.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    btnEditar.click();
-                }
-            });
-            //appendendo os elementos
-            grupo.appendChild(checkbox);
-            grupo.appendChild(texto);
-            grupo.appendChild(editInput);
-            item.appendChild(grupo);
-            item.appendChild(btnEditar);
-            const btnApagar = document.createElement("button");
-            btnApagar.className = "btn btn-sm btn-outline-danger ms-2"; 
-            btnApagar.textContent = "Excluir";
-            btnApagar.addEventListener("click", () => {
-                apagarTarefa(tarefa.id);
-                renderAllTasks();
-            });
-            item.appendChild(btnApagar);
-            allTasksList.appendChild(item);
-        });
+    // Adiciona campo de filtro por hora acima da lista, com botão
+    if (!document.getElementById('filterTime')) {
+        const filtroDiv = document.createElement('div');
+        filtroDiv.className = 'mb-3 d-flex align-items-end';
+        const filtroLabel = document.createElement('label');
+        filtroLabel.textContent = 'Filtrar por hora:';
+        filtroLabel.setAttribute('for', 'filterTime');
+        filtroLabel.className = 'form-label me-2';
+        const filtroInput = document.createElement('input');
+        filtroInput.type = 'time';
+        filtroInput.id = 'filterTime';
+        filtroInput.className = 'form-control me-2';
+        const filtroBtn = document.createElement('button');
+        filtroBtn.type = 'button';
+        filtroBtn.className = 'btn btn-primary';
+        filtroBtn.textContent = 'Buscar';
+        filtroDiv.appendChild(filtroLabel);
+        filtroDiv.appendChild(filtroInput);
+        filtroDiv.appendChild(filtroBtn);
+        allTasksList.parentNode.insertBefore(filtroDiv, allTasksList);
     }
-// filtra os botoes de filtro (pendente, concluída, todas)
-    filterButtons.forEach(btn => {
-        btn.addEventListener("click", function() {
-            filterButtons.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-            currentFilter = this.getAttribute("data-filter");
+    // Referências para filtro de hora e botão já no HTML
+    const filtroHora = document.getElementById('filterTime');
+    const filtroBtn = document.getElementById('filterTimeBtn');
+    // Só aplica o filtro qnc clicar no botão
+    let horaFiltrada = '';
+    if (filtroBtn && filtroHora) {
+        filtroBtn.addEventListener('click', function() {
+            horaFiltrada = filtroHora.value;
             renderAllTasks();
         });
-    });
-
-    if (clearCompletedBtn) {
-        clearCompletedBtn.addEventListener("click", function() {
-            let tarefas = pegarTarefas(); 
-            tarefas = tarefas.filter(t => !t.concluida);
-            salvarTarefas(tarefas);
-            renderAllTasks();
-        });
-    }
-
-    renderAllTasks();
-}
-
-if (verTodas) {
-    verTodas.addEventListener("click", function () {
-        window.location.href = "todas-tarefas.html"; // troca a página para ver todas as tarefas
-    });
-}
+    } 
