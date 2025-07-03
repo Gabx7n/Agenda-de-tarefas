@@ -27,24 +27,27 @@
     <article class="row justify-content-center">
       <section class="col-md-8 col-lg-6">
         <article class="card mt-4">
-          <header class="card-header bg-primary text-white">
-            <h2 class="card-title mb-0 text-center">Agenda aula Betina</h2>
+          <header class="card-header bg-primary text-white text-center">
+            <h2 class="card-title mb-0">Agenda embasbacada</h2>
+            <p class="lead mt-2 mb-0" style="font-size:1.1rem; color:#eaf6fb;">Organize seu dia com estilo!</p>
           </header>
           <section class="card-body">
             <form id="taskForm">
               <div class="mb-3">
                 <label for="taskInput" class="form-label">Tarefa</label>
-                <input type="text" id="taskInput" class="form-control" required>
+                <input type="text" id="taskInput" class="form-control" required placeholder="Ex: Estudar para a prova">
               </div>
-              <div class="mb-3">
-                <label for="taskDate" class="form-label">Data</label>
-                <input type="date" id="taskDate" class="form-control">
+              <div class="mb-3 row g-2">
+                <div class="col-6">
+                  <label for="taskDate" class="form-label">Data</label>
+                  <input type="date" id="taskDate" class="form-control">
+                </div>
+                <div class="col-6">
+                  <label for="taskTime" class="form-label">Hora</label>
+                  <input type="time" id="taskTime" class="form-control">
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="taskTime" class="form-label">Hora</label>
-                <input type="time" id="taskTime" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-primary w-100 mb-3">
+              <button type="submit" class="btn btn-primary w-100 mb-3 shadow">
                 <i class="bi bi-plus-circle"></i> Adicionar tarefa
               </button>
             </form>

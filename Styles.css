@@ -5,7 +5,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 body {
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+    min-height: 100vh;
     padding-top: 2rem;
 }
 
@@ -30,15 +31,19 @@ hr {
 
 .card {
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    background: rgba(30,34,90,0.97);
+    color: #e0eafc;
+    backdrop-filter: blur(2px);
 }
 
 .card-header {
-    border-radius: 10px 10px 0 0 !important;
-    padding: 1.5rem;
-    background-color: #3498db;
-    color: white;
+    border-radius: 18px 18px 0 0 !important;
+    padding: 2rem 1.5rem;
+    background: linear-gradient(90deg, #283593 60%, #1565c0 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(52,152,219,0.08);
 }
 
 .task-item {
@@ -51,7 +56,7 @@ hr {
 
 .completed-task {
     text-decoration: line-through;
-    color: #6c757d;
+    color: #b0b0b0;
 }
 
 .task-actions {
@@ -119,5 +124,45 @@ footer {
     padding: 20px;
     color: #7f8c8d;
     font-size: 0.9rem;
+}
+
+.dark-mode {
+    background: linear-gradient(135deg, #10132b 0%, #232b4d 100%) !important;
+}
+.dark-mode .card {
+    background: #181c36;
+    color: #b3c6f7;
+}
+.dark-mode .card-header {
+    background: linear-gradient(90deg, #10132b 60%, #232b4d 100%);
+    color: #fff;
+}
+.dark-mode .form-control, .dark-mode .form-select {
+    background: #181c36;
+    color: #b3c6f7;
+    border: 1px solid #3949ab;
+}
+.dark-mode .list-group-item {
+    background: #181c36;
+    color: #b3c6f7;
+    border: 1px solid #3949ab;
+}
+.dark-mode .list-group-item:hover {
+    background: #232b4d;
+}
+.dark-mode .btn-primary, .dark-mode .btn-outline-primary:hover {
+    background: linear-gradient(90deg, #10132b 60%, #232b4d 100%);
+    color: #fff;
+}
+.dark-mode .btn-outline-primary {
+    color: #90caf9;
+    border-color: #3949ab;
+}
+.dark-mode .navbar {
+    background: linear-gradient(90deg, #10132b 60%, #232b4d 100%) !important;
+}
+.dark-mode .dropdown-menu {
+    background: #181c36;
+    color: #b3c6f7;
 }
 

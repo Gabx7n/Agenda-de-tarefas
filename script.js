@@ -10,7 +10,7 @@ function salvarTarefas(tarefas) {
 function toggleConcluida(id) {
     const tarefas = pegarTarefas();
     const atualizadas = tarefas.map(tarefa => {
-        if (tarefa.id === id) { //pega o id certinho da tarefa (talvez seja o pior jeito de fazer isso desculpa)
+        if (tarefa.id === id) { //pega o id certinho da tarefa (talvez seja o pior jeito de fazer isso desculpa betina)
             return { ...tarefa, concluida: !tarefa.concluida };
         }
         return tarefa;
