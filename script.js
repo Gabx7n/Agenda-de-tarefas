@@ -1,21 +1,18 @@
-function salvarTarefas(tarefas) {
-    localStorage.setItem('minhasTarefas', JSON.stringify(tarefas));
-}
-
-function pegarTarefas() {
-    const tarefasSalvas = localStorage.getItem('minhasTarefas');
-    return tarefasSalvas ? JSON.parse(tarefasSalvas) : [];
-}
-
-function adicionarTarefa(texto) {
+function toggleConcluida(id) {
     const tarefas = pegarTarefas();
-    const novaTarefa = {
-        id: Date.now(),
-        texto: texto,
-        concluida: false
-    };
-    tarefas.push(novaTarefa);
-    salvarTarefas(tarefas);
-    return novaTarefa;
+    const tarefasAtualizadas = tarefas.map(tarefa => {
+        if (tarefa.id === id) {
+            return {...tarefa, concluida: !tarefa.concluida};
+        }
+        return tarefa;
+    });
+    salvarTarefas(tarefasAtualizadas);
+    return tarefasAtualizadas;
 }
 
+function apagarTarefa(id) {
+    const tarefas = pegarTarefas();
+    const tarefasAtualizadas = tarefas.filter(tarefa => tarefa.id !== id);
+    salvarTarefas(tarefasAtualizadas);
+    return tarefasAtualizadas;
+}
