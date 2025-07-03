@@ -27,6 +27,8 @@ const input = document.getElementById("taskInput");
 const dataInput = document.getElementById("taskDate");
 const lista = document.getElementById("taskList");
 const verTodas = document.getElementById("showAllTasks");
+const filtroInput = document.getElementById("taskSearch");
+const botaoBuscar = document.getElementById("searchBtn");
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -54,6 +56,29 @@ verTodas.addEventListener("click", function () {
   mostrarTarefas(tarefas);
 });
 
+botaoBuscar.addEventListener("click", () => {
+  const termo = filtroInput.value.trim();
+  const tarefas = pegarTarefas();
+  const filtradas = aplicarFiltro(tarefas, termo);
+  mostrarTarefas(filtradas);
+});
+
+function aplicarFiltro(tarefas, termo) {
+  if (!termo) return tarefas;
+  return tarefas.filter(tarefa =>
+    tarefa.texto.toLowerCase().includes(termo.toLowerCase())
+  );
+}
+
+function mostrarTarefasDoDia() {
+  const hoje = new Date().toISOString().split("T")[0];
+  const tarefas = pegarTarefas();
+  const doDia = tarefas
+    .filter(t => t.data.startsWith(hoje))
+    .sort((a, b) => new Date(a.data) - new Date(b.data));
+  mostrarTarefas(doDia);
+}
+
 function mostrarTarefas(tarefas) {
   lista.innerHTML = "";
   tarefas.forEach((tarefa) => {
@@ -71,7 +96,7 @@ function mostrarTarefas(tarefas) {
 
     checkbox.addEventListener("change", () => {
       const atualizadas = toggleConcluida(tarefa.id);
-      mostrarTarefasDoDia();
+      mostrarTarefas(atualizadas);
     });
 
     const label = document.createElement("label");
@@ -95,7 +120,7 @@ function mostrarTarefas(tarefas) {
     botaoExcluir.innerHTML = '<i class="bi bi-trash"></i>';
     botaoExcluir.onclick = () => {
       const atualizadas = apagarTarefa(tarefa.id);
-      mostrarTarefasDoDia();
+      mostrarTarefas(atualizadas);
     };
 
     item.appendChild(grupo);
@@ -109,15 +134,6 @@ function formatarHora(dataIso) {
   const horas = String(data.getHours()).padStart(2, "0");
   const minutos = String(data.getMinutes()).padStart(2, "0");
   return `${horas}:${minutos}`;
-}
-
-function mostrarTarefasDoDia() {
-  const hoje = new Date().toISOString().split("T")[0];
-  const tarefas = pegarTarefas();
-  const doDia = tarefas
-    .filter(t => t.data && t.data.startsWith(hoje))
-    .sort((a, b) => new Date(a.data) - new Date(b.data));
-  mostrarTarefas(doDia);
 }
 
 document.addEventListener("DOMContentLoaded", mostrarTarefasDoDia);
