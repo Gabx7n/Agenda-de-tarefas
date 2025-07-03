@@ -10,13 +10,14 @@
 </head>
 <body>    
     <main class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <section class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title mb-0 text-center">Agenda de Tarefas</h3>
-                    </div>
-                    <div class="card-body">
+        <article class="row justify-content-center">
+            <section class="col-md-8 col-lg-6">
+                <article class="card">
+                    <header class="card-header bg-primary text-white">
+                        <h2 class="card-title mb-0 text-center">Agenda de Tarefas</h2>
+                    </header>
+                    
+                    <section class="card-body">
                         <form id="taskForm" class="mb-4">
                             <div class="input-group">
                                 <input type="text" id="taskInput" class="form-control" placeholder="Adicionar nova tarefa" required>
@@ -25,37 +26,18 @@
                                 </button>
                             </div>
                         </form>
-                        <section class="mb-3 btn-group w-100" role="group">
-                            <button type="button" class="btn btn-outline-secondary active" data-filter="all">Todas</button>
-                            <button type="button" class="btn btn-outline-secondary" data-filter="pending">Pendentes</button>
-                            <button type="button" class="btn btn-outline-secondary" data-filter="completed">Concluídas</button>
-                        </section>
-                        <ul id="taskList" class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                    <label class="form-check-label">Tarefa exemplo</label>
-                                </div>
-                                <div class="task-actions">
-                                    <button class="btn btn-sm btn-outline-primary edit-btn">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger delete-btn">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-footer text-muted text-center">
-                        <span id="taskCount">1 tarefa</span>
-                        <button id="clearCompleted" class="btn btn-sm btn-outline-danger float-end">
-                            <i class="bi bi-trash"></i> Limpar concluídas
-                        </button>
-                    </div>
-                </section>
-            </div>
-        </div>
+                        
+                        <ul id="taskList" class="list-group mb-3"></ul>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button id="showAllTasks" class="btn btn-outline-primary">
+                                <i class="bi bi-list-check"></i> Ver todas as tarefas
+                            </button>
+                        </div>
+                    </section>
+                </article>
+            </section>
+        </article>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
