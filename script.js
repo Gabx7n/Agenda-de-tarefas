@@ -19,7 +19,8 @@ function toggleConcluida(id) {
     return atualizadas;
 }
 
-//xunxera pra tirar as tarefas do localstorage pelo id
+//xunxera pra tirar as tarefas do localstorage pelo i
+// d
 function apagarTarefa(id) {
     const tarefas = pegarTarefas();
     const atualizadas = tarefas.filter(tarefa => tarefa.id !== id);
@@ -37,6 +38,13 @@ if (verTodas) {
     });
 }
 let timeInput = document.getElementById("taskTime");
+
+// Função utilitária para garantir formato HH:MM
+function padronizarHora(hora) {
+    if (!hora) return '';
+    // Aceita HH:MM ou HH:MM:SS, retorna sempre HH:MM
+    return hora.slice(0,5);
+}
 
 //de novo xunxera, verifica se o form existe antes de adicionar o listener
 if (form) {
@@ -56,7 +64,7 @@ if (form) {
         e.preventDefault();
         const texto = input.value.trim();
         const data = dataInput.value;
-        const hora = timeInput ? timeInput.value : "";
+        const hora = timeInput ? padronizarHora(timeInput.value) : "";
         if (texto !== "") {
             const tarefas = pegarTarefas();
             const novaTarefa = {
@@ -97,6 +105,7 @@ if (document.getElementById("allTasksList")) {
         filtroBtn.type = 'button';
         filtroBtn.className = 'btn btn-primary';
         filtroBtn.textContent = 'Buscar';
+        filtroBtn.id = 'filterTimeBtn'; // <-- garante que o botão tem o id correto
         filtroDiv.appendChild(filtroLabel);
         filtroDiv.appendChild(filtroInput);
         filtroDiv.appendChild(filtroBtn);
@@ -108,10 +117,12 @@ if (document.getElementById("allTasksList")) {
     // Só aplica o filtro qnc clicar no botão
     let horaFiltrada = '';
     if (filtroBtn && filtroHora) {
-        filtroBtn.addEventListener('click', function() {
+        filtroBtn.onclick = function() {
             horaFiltrada = filtroHora.value;
+            filterButtons.forEach(b => b.classList.remove('active'));
+            currentFilter = 'hora';
             renderAllTasks();
-        });
+        };
     } 
 }
 if (document.getElementById("allTasksList")) {
@@ -146,10 +157,12 @@ if (document.getElementById("allTasksList")) {
     const filtroBtn = document.getElementById('filterTimeBtn');
     let horaFiltrada = '';
     if (filtroBtn && filtroHora) {
-        filtroBtn.addEventListener('click', function() {
+        filtroBtn.onclick = function() {
             horaFiltrada = filtroHora.value;
+            filterButtons.forEach(b => b.classList.remove('active'));
+            currentFilter = 'hora';
             renderAllTasks();
-        });
+        };
     }
 
     filterButtons.forEach(btn => {
@@ -173,7 +186,9 @@ if (document.getElementById("allTasksList")) {
         let tarefas = pegarTarefas();
         if (currentFilter === "pending") tarefas = tarefas.filter(t => !t.concluida);
         if (currentFilter === "completed") tarefas = tarefas.filter(t => t.concluida);
-        if (horaFiltrada) tarefas = tarefas.filter(t => t.hora === horaFiltrada);
+        if (currentFilter === 'hora' && horaFiltrada) {
+            tarefas = tarefas.filter(t => padronizarHora(t.hora) === padronizarHora(horaFiltrada));
+        }
         allTasksList.innerHTML = "";
         if (tarefas.length === 0) {
             allTasksList.innerHTML = `<li class="list-group-item text-center text-muted">Nenhuma tarefa encontrada.</li>`;
@@ -182,11 +197,12 @@ if (document.getElementById("allTasksList")) {
         tarefas.forEach(tarefa => {
             const li = document.createElement("li");
             li.className = "list-group-item d-flex justify-content-between align-items-center";
+            let horaFormatada = padronizarHora(tarefa.hora);
             li.innerHTML = `
                 <span>
                     <input type="checkbox" ${tarefa.concluida ? "checked" : ""} data-id="${tarefa.id}" class="me-2 toggle-task">
                     <strong>${tarefa.texto}</strong>
-                    <small class="text-muted ms-2">${tarefa.data || ""} ${tarefa.hora || ""}</small>
+                    <small class="text-muted ms-2">${tarefa.data || ""} ${horaFormatada}</small>
                 </span>
                 <span>
                     <a href="editar-tarefas.html?id=${tarefa.id}" class="btn btn-sm btn-outline-primary me-1" title="Editar"><i class="bi bi-pencil"></i></a>
@@ -232,9 +248,7 @@ if (window.location.pathname.endsWith('editar-tarefas.html')) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             tarefa.texto = input.value.trim();
-            tarefa.data = dataInput.value;
-            tarefa.hora = timeInput.value;
-            salvarTarefas(tarefas);
+            tarefa.data = dataInput.value;            salvarTarefas(tarefas);
             window.location.href = "todas-tarefas.html";
         });
     }
@@ -279,13 +293,15 @@ if (window.location.pathname.endsWith('editar-tarefas.html')) {
                 renderEditList();
             });
         });
-        // listeners para inputs
+        // listeners para inputs (ajustar a hora q tá bugada)
         tasksList.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', function() {
                 const idx = Number(this.getAttribute('data-idx'));
                 const field = this.getAttribute('data-field');
                 if (field === 'concluida') {
                     tarefas[idx][field] = this.checked;
+                } else if (field === 'hora') {
+                    tarefas[idx][field] = padronizarHora(this.value);
                 } else {
                     tarefas[idx][field] = this.value;
                 }
@@ -312,7 +328,10 @@ function mostrarTarefasHoje() {
     if (!lista) return;
     const tarefas = pegarTarefas();
     const hoje = new Date();
-    const hojeStr = hoje.toISOString().slice(0, 10);
+    const yyyy = hoje.getFullYear();
+    const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoje.getDate()).padStart(2, '0');
+    const hojeStr = `${yyyy}-${mm}-${dd}`;
     const tarefasHoje = tarefas.filter(t => t.data === hojeStr);
     lista.innerHTML = "";
     if (tarefasHoje.length === 0) {
@@ -322,11 +341,13 @@ function mostrarTarefasHoje() {
     tarefasHoje.forEach(tarefa => {
         const li = document.createElement("li");
         li.className = "list-group-item d-flex justify-content-between align-items-center";
+        // Mostra hora só no formato 24h (HH:MM)
+        let horaFormatada = padronizarHora(tarefa.hora);
         li.innerHTML = `
             <span>
                 <input type="checkbox" ${tarefa.concluida ? "checked" : ""} data-id="${tarefa.id}" class="me-2 toggle-task">
                 <strong>${tarefa.texto}</strong>
-                <small class="text-muted ms-2">${tarefa.hora || ""}</small>
+                <small class="text-muted ms-2">${horaFormatada}</small>
             </span>
             <span>
                 <a href="editar-tarefas.html?id=${tarefa.id}" class="btn btn-sm btn-outline-primary me-1" title="Editar"><i class="bi bi-pencil"></i></a>
@@ -349,4 +370,7 @@ function mostrarTarefasHoje() {
         });
     });
 }
-mostrarTarefasHoje();
+// Só executa mostrarTarefasHoje na index.html
+if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '/index.html') {
+    mostrarTarefasHoje();
+}
